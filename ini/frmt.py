@@ -20,3 +20,7 @@ if __name__ == "__main__":
     with open("rosalind_frmt.txt", "r") as f:
         entry_ids = f.readline().strip().split()
     shortest_entry(entry_ids)
+
+
+def get_records():
+    return None
