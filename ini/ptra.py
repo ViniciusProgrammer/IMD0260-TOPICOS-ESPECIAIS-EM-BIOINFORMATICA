@@ -1,12 +1,14 @@
 from Bio.Seq import translate
+from Bio.Data import CodonTable
 
 def genetic_code(dna, protein):
+    dna = dna.upper().strip()
+    protein = protein.strip()
     res = []
-    table_ids = [1, 2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 14, 15]
-    for t in table_ids:
-        translation = translate(dna, table=t, to_stop=False)
-        # compara ignorando STOP (*) no final
-        if translation.startswith(protein):
+    for t in CodonTable.ambiguous_generic_by_id:
+        translation = str(translate(dna, table=t, to_stop=False))
+        translation = translation.replace("*", "")  # alguns códigos ainda podem ter STOPs
+        if translation == protein:
             res.append(t)
     return res
 
@@ -16,6 +18,6 @@ if __name__ == "__main__":
         protein = f.readline().strip()
     res = genetic_code(dna, protein)
     if res:
-        print(res[0])
+        print(res[0])   # imprime o primeiro índice válido
     else:
         print("Nenhuma tabela bateu!")
