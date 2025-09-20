@@ -1,36 +1,32 @@
 import sys
 
-
 def extract_meme_regex(filepath):
     """
     Analisa um arquivo de saída do MEME e extrai a primeira expressão regular.
-
     :param filepath: Caminho para o arquivo meme.txt.
     :return: A string da expressão regular, ou None se não for encontrada.
     """
     try:
         with open(filepath, 'r') as f:
+            # Procura pela seção do primeiro motif
+            in_motif_1_section = False
             for line in f:
-                # Procura pela linha que indica a seção da expressão regular
-                if 'regular expression' in line:
-                    next(f)  # Pula a linha de cabeçalho (ex: '-----------------')
+                if 'MOTIF ELTTYAEQEGDGTYTSLTMESYDMCYFMVFMQFLVNK MEME-1' in line:
+                    in_motif_1_section = True
 
-                    regex = ''
-                    while True:
-                        line = f.readline()
-                        # Para quando encontra a linha final da tabela
-                        if '-' in line or not line:
-                            break
-                        # Adiciona a linha da expressão, removendo espaços em branco
-                        regex += line.strip()
+                # Uma vez na seção correta, procura pela linha da expressão regular
+                if in_motif_1_section and 'regular expression' in line:
+                    next(f)  # Pula a linha de hífens '-----------------'
 
+                    # A próxima linha é a resposta
+                    regex = f.readline().strip()
                     return regex
+
     except FileNotFoundError:
         print(f"Erro: O arquivo '{filepath}' não foi encontrado.")
         return None
 
-    return None  # Retorna None se a seção não for encontrada no arquivo
-
+    return None # Retorna None se a seção ou a linha não forem encontradas
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
@@ -45,4 +41,4 @@ if __name__ == "__main__":
         print("Expressão Regular Encontrada:")
         print(regular_expression)
     else:
-        print("Nenhuma expressão regular foi encontrada no arquivo.")
+        print("Nenhuma expressão regular foi encontrada para o Motif 1 no arquivo.")
